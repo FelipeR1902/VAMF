@@ -1,219 +1,169 @@
-import React, { useEffect, useState } from "react";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import Icon from "@mui/material/Icon";
-import Avatar from "@mui/material/Avatar";
-import auth from "../lib/auth-helper";
-import FileUpload from "@mui/icons-material/AddPhotoAlternate";
-import { makeStyles } from "@mui/material/styles";
-import { read, update } from "./api-shop.js";
-import { Navigate, useParams } from "react-router-dom";
-import Grid from "@mui/material/Grid";
-import MyProducts from "../product/MyProducts";
+import React, { useEffect, useState } from 'react';
+import auth from '../lib/auth-helper';
+import styled from '@emotion/styled';
+import { read, update } from './api-shop.js';
+import { Link, Navigate, useParams } from 'react-router-dom';
+import {
+  Card,
+  CardActions,
+  CardContent,
+  Button,
+  TextField,
+  Typography,
+  Icon,
+  Avatar,
+} from '@mui/material';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    margin: 30,
-  },
-  card: {
-    textAlign: "center",
-    paddingBottom: theme.spacing(2),
-  },
-  title: {
-    margin: theme.spacing(2),
-    color: theme.palette.protectedTitle,
-    fontSize: "1.2em",
-  },
-  subheading: {
-    marginTop: theme.spacing(2),
-    color: theme.palette.openTitle,
-  },
-  error: {
-    verticalAlign: "middle",
-  },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 400,
-  },
-  submit: {
-    margin: "auto",
-    marginBottom: theme.spacing(2),
-  },
-  bigAvatar: {
-    width: 60,
-    height: 60,
-    margin: "auto",
-  },
-  input: {
-    display: "none",
-  },
-  filename: {
-    marginLeft: "10px",
-  },
-}));
+const Root = styled.div`
+  padding: 16px;
+`;
 
-export default function EditShop() {
-  const params = useParams();
-  const classes = useStyles();
+const CardStyled = styled(Card)`
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+  margin-top: 24px;
+  padding-bottom: 24px;
+`;
+
+const Title = styled(Typography)`
+  margin-top: 16px;
+  color: #2e7d32;
+  font-size: 1.2em;
+`;
+
+const Error = styled(Typography)`
+  color: red;
+`;
+
+const TextFieldStyled = styled(TextField)`
+  margin-left: 8px;
+  margin-right: 8px;
+  width: 300px;
+`;
+
+const ButtonStyled = styled(Button)`
+  margin: 16px;
+`;
+
+const AvatarStyled = styled(Avatar)`
+  width: 60px;
+  height: 60px;
+  margin: auto;
+`;
+
+const EditShop = () => {
   const [values, setValues] = useState({
-    name: "",
-    description: "",
-    image: "",
-    redirect: false,
-    error: "",
-    id: "",
+    name: '',
+    description: '',
+    image: '',
+    redirectToProfile: false,
+    error: '',
   });
-  const jwt = auth.isAuthenticated();
+  const { shopId } = useParams();
+
   useEffect(() => {
     const abortController = new AbortController();
     const signal = abortController.signal;
-    read(
-      {
-        shopId: params.shopId,
-      },
-      signal,
-    ).then((data) => {
-      if (data.error) {
+
+    read({ shopId }, signal).then((data) => {
+      if (data && data.error) {
         setValues({ ...values, error: data.error });
       } else {
         setValues({
           ...values,
-          id: data._id,
           name: data.name,
           description: data.description,
-          owner: data.owner.name,
         });
       }
     });
     return function cleanup() {
       abortController.abort();
     };
-  }, []);
+  }, [shopId]);
+
+  const handleChange = (name) => (event) => {
+    const value = name === 'image' ? event.target.files[0] : event.target.value;
+    setValues({ ...values, [name]: value });
+  };
 
   const clickSubmit = () => {
-    let shopData = new FormData();
-    values.name && shopData.append("name", values.name);
-    values.description && shopData.append("description", values.description);
-    values.image && shopData.append("image", values.image);
+    const jwt = auth.isAuthenticated();
+    const shopData = new FormData();
+    values.name && shopData.append('name', values.name);
+    values.description && shopData.append('description', values.description);
+    values.image && shopData.append('image', values.image);
+
     update(
       {
-        shopId: params.shopId,
+        shopId: shopId,
       },
       {
         t: jwt.token,
       },
-      shopData,
+      shopData
     ).then((data) => {
-      if (data.error) {
+      if (data && data.error) {
         setValues({ ...values, error: data.error });
       } else {
-        setValues({ ...values, redirect: true });
+        setValues({ ...values, redirectToProfile: true });
       }
     });
   };
-  const handleChange = (name) => (event) => {
-    const value = name === "image" ? event.target.files[0] : event.target.value;
-    setValues({ ...values, [name]: value });
-  };
 
-  const logoUrl = values.id
-    ? `/api/shops/logo/${values.id}?${new Date().getTime()}`
-    : "/api/shops/defaultphoto";
-  if (values.redirect) {
-    return <Navigate to={"/seller/shops"} />;
+  if (values.redirectToProfile) {
+    return <Navigate to={'/seller/shops'} />;
   }
+
   return (
-    <div className={classes.root}>
-      <Grid container spacing={8}>
-        <Grid item xs={6} sm={6}>
-          <Card className={classes.card}>
-            <CardContent>
-              <Typography
-                type="headline"
-                component="h2"
-                className={classes.title}
-              >
-                Edit Shop
-              </Typography>
-              <br />
-              <Avatar src={logoUrl} className={classes.bigAvatar} />
-              <br />
-              <input
-                accept="image/*"
-                onChange={handleChange("image")}
-                className={classes.input}
-                id="icon-button-file"
-                type="file"
-              />
-              <label htmlFor="icon-button-file">
-                <Button variant="contained" color="default" component="span">
-                  Change Logo
-                  <FileUpload />
-                </Button>
-              </label>{" "}
-              <span className={classes.filename}>
-                {values.image ? values.image.name : ""}
-              </span>
-              <br />
-              <TextField
-                id="name"
-                label="Name"
-                className={classes.textField}
-                value={values.name}
-                onChange={handleChange("name")}
-                margin="normal"
-              />
-              <br />
-              <TextField
-                id="multiline-flexible"
-                label="Description"
-                multiline
-                rows="3"
-                value={values.description}
-                onChange={handleChange("description")}
-                className={classes.textField}
-                margin="normal"
-              />
-              <br />
-              <Typography
-                type="subheading"
-                component="h4"
-                className={classes.subheading}
-              >
-                Owner: {values.owner}
-              </Typography>
-              <br />
-              {values.error && (
-                <Typography component="p" color="error">
-                  <Icon color="error" className={classes.error}>
-                    error
-                  </Icon>
-                  {values.error}
-                </Typography>
-              )}
-            </CardContent>
-            <CardActions>
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={clickSubmit}
-                className={classes.submit}
-              >
-                Update
-              </Button>
-            </CardActions>
-          </Card>
-        </Grid>
-        <Grid item xs={6} sm={6}>
-          <MyProducts shopId={params.shopId} />
-        </Grid>
-      </Grid>
-    </div>
+    <Root>
+      <CardStyled>
+        <CardContent>
+          <Title>Edit Shop</Title>
+          <AvatarStyled src={values.imageUrl} />
+          <input
+            accept="image/*"
+            type="file"
+            onChange={handleChange('image')}
+          />
+          <TextFieldStyled
+            id="name"
+            label="Name"
+            value={values.name}
+            onChange={handleChange('name')}
+          />
+          <br />
+          <TextFieldStyled
+            id="multiline-flexible"
+            label="Description"
+            multiline
+            rows="2"
+            value={values.description}
+            onChange={handleChange('description')}
+          />
+          <br />
+          {values.error && (
+            <Error component="p">
+              <Icon color="error">error</Icon>
+              {values.error}
+            </Error>
+          )}
+        </CardContent>
+        <CardActions>
+          <ButtonStyled
+            color="primary"
+            variant="contained"
+            onClick={clickSubmit}
+          >
+            Update
+          </ButtonStyled>
+          <Link to={'/seller/shops'}>
+            <ButtonStyled variant="contained">Cancel</ButtonStyled>
+          </Link>
+        </CardActions>
+      </CardStyled>
+    </Root>
   );
-}
+};
+
+export default EditShop;

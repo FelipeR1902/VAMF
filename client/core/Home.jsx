@@ -1,38 +1,38 @@
 import React from "react";
-import { makeStyles } from "@mui/material/styles";
+import styled from '@emotion/styled';
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import logo from "./../assets/images/logo.jpg";
 
-const useStyles = makeStyles((theme) => ({
-  card: {
-    maxWidth: 600,
-    margin: "auto",
-    marginTop: theme.spacing(5),
-  },
-  title: {
-    padding: theme.spacing(3, 2.5, 2),
-    color: theme.palette.openTitle,
-  },
-  media: {
-    minHeight: 400,
-  },
-}));
+const CardStyled = styled(Card)`
+  max-width: 600px;
+  margin: auto;
+  margin-top: 24px; /* Replace theme.spacing(5) */
+`;
+
+const Title = styled(Typography)`
+  padding: 24px 20px 16px; /* Replace theme.spacing(3, 2.5, 2) */
+  color: #2e7d32; /* Replace theme.palette.openTitle */
+`;
+
+const Media = styled(CardMedia)`
+  min-height: 400px;
+`;
+
 export default function Home() {
-  const classes = useStyles();
   return (
-    <Card className={classes.card}>
-      <Typography variant="h6" className={classes.title}>
+    <CardStyled>
+      <Title variant="h6">
         Home Page
-      </Typography>
-      <CardMedia className={classes.media} image={logo} title="Logo" />
+      </Title>
+      <Media image={logo} title="Logo" />
       <CardContent>
         <Typography variant="body2" component="p">
           Welcome to the GAME OVER home page.
         </Typography>
       </CardContent>
-    </Card>
+    </CardStyled>
   );
 }

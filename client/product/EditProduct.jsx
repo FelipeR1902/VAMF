@@ -1,87 +1,81 @@
-import React, { useEffect, useState } from "react";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import Icon from "@mui/material/Icon";
-import Avatar from "@mui/material/Avatar";
-import auth from "../lib/auth-helper";
-import FileUpload from "@mui/icons-material/AddPhotoAlternate";
-import { makeStyles } from "@mui/material/styles";
-import { read, update } from "./api-product.js";
-import { Link, Navigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import auth from '../lib/auth-helper';
+import FileUpload from '@mui/icons-material/AddPhotoAlternate';
+import styled from '@emotion/styled';
+import { read, update } from './api-product.js';
+import { Link, Navigate, useParams } from 'react-router-dom';
+import {
+  Card,
+  CardActions,
+  CardContent,
+  Button,
+  TextField,
+  Typography,
+  Icon,
+  Avatar,
+} from '@mui/material';
 
-const useStyles = makeStyles((theme) => ({
-  card: {
-    margin: "auto",
-    textAlign: "center",
-    marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(2),
-    maxWidth: 500,
-    paddingBottom: theme.spacing(2),
-  },
-  title: {
-    margin: theme.spacing(2),
-    color: theme.palette.protectedTitle,
-    fontSize: "1.2em",
-  },
-  error: {
-    verticalAlign: "middle",
-  },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 400,
-  },
-  submit: {
-    margin: "auto",
-    marginBottom: theme.spacing(2),
-  },
-  bigAvatar: {
-    width: 60,
-    height: 60,
-    margin: "auto",
-  },
-  input: {
-    display: "none",
-  },
-  filename: {
-    marginLeft: "10px",
-  },
-}));
+const Root = styled.div`
+  padding: 16px;
+`;
 
-export default function EditProduct() {
-  const params = useParams();
-  const classes = useStyles();
+const CardStyled = styled(Card)`
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+  margin-top: 24px;
+  padding-bottom: 24px;
+`;
+
+const Title = styled(Typography)`
+  margin-top: 16px;
+  color: #2e7d32;
+  font-size: 1.2em;
+`;
+
+const Error = styled(Typography)`
+  color: red;
+`;
+
+const TextFieldStyled = styled(TextField)`
+  margin-left: 8px;
+  margin-right: 8px;
+  width: 300px;
+`;
+
+const ButtonStyled = styled(Button)`
+  margin: 16px;
+`;
+
+const AvatarStyled = styled(Avatar)`
+  width: 60px;
+  height: 60px;
+  margin: auto;
+`;
+
+const EditProduct = () => {
   const [values, setValues] = useState({
-    name: "",
-    description: "",
-    image: "",
-    category: "",
-    quantity: "",
-    price: "",
-    redirect: false,
-    error: "",
+    name: '',
+    description: '',
+    image: '',
+    category: '',
+    quantity: '',
+    price: '',
+    redirectToProfile: false,
+    error: '',
   });
+  const { productId } = useParams();
 
-  const jwt = auth.isAuthenticated();
   useEffect(() => {
     const abortController = new AbortController();
     const signal = abortController.signal;
-    read(
-      {
-        productId: params.productId,
-      },
-      signal,
-    ).then((data) => {
-      if (data.error) {
+
+    read({ productId }, signal).then((data) => {
+      if (data && data.error) {
         setValues({ ...values, error: data.error });
       } else {
         setValues({
           ...values,
-          id: data._id,
           name: data.name,
           description: data.description,
           category: data.category,
@@ -93,145 +87,116 @@ export default function EditProduct() {
     return function cleanup() {
       abortController.abort();
     };
-  }, []);
+  }, [productId]);
+
+  const handleChange = (name) => (event) => {
+    const value = name === 'image' ? event.target.files[0] : event.target.value;
+    setValues({ ...values, [name]: value });
+  };
+
   const clickSubmit = () => {
-    let productData = new FormData();
-    values.name && productData.append("name", values.name);
-    values.description && productData.append("description", values.description);
-    values.image && productData.append("image", values.image);
-    values.category && productData.append("category", values.category);
-    values.quantity && productData.append("quantity", values.quantity);
-    values.price && productData.append("price", values.price);
+    const jwt = auth.isAuthenticated();
+    const productData = new FormData();
+    values.name && productData.append('name', values.name);
+    values.description && productData.append('description', values.description);
+    values.category && productData.append('category', values.category);
+    values.quantity && productData.append('quantity', values.quantity);
+    values.price && productData.append('price', values.price);
+    values.image && productData.append('image', values.image);
 
     update(
       {
-        shopId: params.shopId,
-        productId: params.productId,
+        productId: productId,
       },
       {
         t: jwt.token,
       },
-      productData,
+      productData
     ).then((data) => {
-      if (data.error) {
+      if (data && data.error) {
         setValues({ ...values, error: data.error });
       } else {
-        setValues({ ...values, redirect: true });
+        setValues({ ...values, redirectToProfile: true });
       }
     });
   };
-  const handleChange = (name) => (event) => {
-    const value = name === "image" ? event.target.files[0] : event.target.value;
-    setValues({ ...values, [name]: value });
-  };
-  const imageUrl = values.id
-    ? `/api/product/image/${values.id}?${new Date().getTime()}`
-    : "/api/product/defaultphoto";
-  if (values.redirect) {
-    return <Navigate to={"/seller/shop/edit/" + params.shopId} />;
+
+  if (values.redirectToProfile) {
+    return <Navigate to={'/seller/shops'} />;
   }
+
   return (
-    <div>
-      <Card className={classes.card}>
+    <Root>
+      <CardStyled>
         <CardContent>
-          <Typography type="headline" component="h2" className={classes.title}>
-            Edit Product
-          </Typography>
-          <br />
-          <Avatar src={imageUrl} className={classes.bigAvatar} />
-          <br />
+          <Title>Edit Product</Title>
+          <AvatarStyled src={values.imageUrl} />
           <input
             accept="image/*"
-            onChange={handleChange("image")}
-            className={classes.input}
-            id="icon-button-file"
             type="file"
+            onChange={handleChange('image')}
           />
-          <label htmlFor="icon-button-file">
-            <Button variant="contained" color="secondary" component="span">
-              Change Image
-              <FileUpload />
-            </Button>
-          </label>{" "}
-          <span className={classes.filename}>
-            {values.image ? values.image.name : ""}
-          </span>
-          <br />
-          <TextField
+          <TextFieldStyled
             id="name"
             label="Name"
-            className={classes.textField}
             value={values.name}
-            onChange={handleChange("name")}
-            margin="normal"
+            onChange={handleChange('name')}
           />
           <br />
-          <TextField
+          <TextFieldStyled
             id="multiline-flexible"
             label="Description"
             multiline
-            rows="3"
+            rows="2"
             value={values.description}
-            onChange={handleChange("description")}
-            className={classes.textField}
-            margin="normal"
+            onChange={handleChange('description')}
           />
           <br />
-          <TextField
+          <TextFieldStyled
             id="category"
             label="Category"
-            className={classes.textField}
             value={values.category}
-            onChange={handleChange("category")}
-            margin="normal"
+            onChange={handleChange('category')}
           />
           <br />
-          <TextField
+          <TextFieldStyled
             id="quantity"
             label="Quantity"
-            className={classes.textField}
             value={values.quantity}
-            onChange={handleChange("quantity")}
+            onChange={handleChange('quantity')}
             type="number"
-            margin="normal"
           />
           <br />
-          <TextField
+          <TextFieldStyled
             id="price"
             label="Price"
-            className={classes.textField}
             value={values.price}
-            onChange={handleChange("price")}
+            onChange={handleChange('price')}
             type="number"
-            margin="normal"
           />
           <br />
           {values.error && (
-            <Typography component="p" color="error">
-              <Icon color="error" className={classes.error}>
-                error
-              </Icon>
+            <Error component="p">
+              <Icon color="error">error</Icon>
               {values.error}
-            </Typography>
+            </Error>
           )}
         </CardContent>
         <CardActions>
-          <Button
+          <ButtonStyled
             color="primary"
             variant="contained"
             onClick={clickSubmit}
-            className={classes.submit}
           >
             Update
-          </Button>
-          <Link
-            to={"/seller/shops/edit/" + params.shopId}
-            className={classes.submit}
-          >
-            <Button variant="contained">Cancel</Button>
+          </ButtonStyled>
+          <Link to={'/seller/shops'}>
+            <ButtonStyled variant="contained">Cancel</ButtonStyled>
           </Link>
         </CardActions>
-      </Card>
-    </div>
+      </CardStyled>
+    </Root>
   );
-}
+};
+
+export default EditProduct;

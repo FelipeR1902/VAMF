@@ -1,72 +1,104 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import IconButton from "@mui/material/IconButton";
-import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/Delete";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import auth from "../lib/auth-helper";
-import { remove } from "./api-product.js";
+import React, { useEffect, useState } from 'react';
+import auth from '../lib/auth-helper';
+import styled from '@emotion/styled';
+import { read, remove } from './api-product.js';
+import { Redirect, useParams } from 'react-router-dom';
+import {
+  Card,
+  CardActions,
+  CardContent,
+  Button,
+  Typography,
+} from '@mui/material';
+import { Link } from 'react-router-dom';
 
-export default function DeleteProduct(props) {
-  const [open, setOpen] = useState(false);
+const Root = styled.div`
+  margin: 24px;
+`;
 
-  const jwt = auth.isAuthenticated();
-  const clickButton = () => {
-    setOpen(true);
-  };
-  const deleteProduct = () => {
+const CardStyled = styled(Card)`
+  max-width: 600px;
+  margin: 'auto';
+  text-align: 'center';
+  margin-top: 24px;
+  padding-bottom: 24px;
+`;
+
+const Title = styled(Typography)`
+  margin: 16px 0;
+  color: #2e7d32;
+  font-size: 1.2em;
+`;
+
+const Error = styled(Typography)`
+  color: red;
+`;
+
+const DeleteProduct = () => {
+  const [values, setValues] = useState({
+    product: {},
+    redirect: false,
+    error: '',
+  });
+  const { productId } = useParams();
+
+  useEffect(() => {
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    read({ productId: productId }, signal).then((data) => {
+      if (data.error) {
+        setValues({ ...values, error: data.error });
+      } else {
+        setValues({ ...values, product: data });
+      }
+    });
+    return function cleanup() {
+      abortController.abort();
+    };
+  }, [productId]);
+
+  const clickSubmit = () => {
+    const jwt = auth.isAuthenticated();
     remove(
       {
-        shopId: props.shopId,
-        productId: props.product._id,
+        productId: values.product._id,
       },
-      { t: jwt.token },
+      { t: jwt.token }
     ).then((data) => {
       if (data.error) {
-        console.log(data.error);
+        setValues({ ...values, error: data.error });
       } else {
-        setOpen(false);
-        props.onRemove(props.product);
+        setValues({ ...values, redirect: true });
       }
     });
   };
-  const handleRequestClose = () => {
-    setOpen(false);
-  };
+
+  if (values.redirect) {
+    return <Redirect to="/seller/shops" />;
+  }
+
   return (
-    <span>
-      <IconButton aria-label="Delete" onClick={clickButton} color="secondary">
-        <DeleteIcon />
-      </IconButton>
-      <Dialog open={open} onClose={handleRequestClose}>
-        <DialogTitle>{"Delete " + props.product.name}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Confirm to delete your product {props.product.name}.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleRequestClose} color="primary">
-            Cancel
-          </Button>
-          <Button
-            onClick={deleteProduct}
-            color="secondary"
-            autoFocus="autoFocus"
-          >
+    <Root>
+      <CardStyled>
+        <CardContent>
+          <Title>Delete Product</Title>
+          <Typography>
+            Are you sure you want to delete this product?
+          </Typography>
+          {values.error && <Error>{values.error}</Error>}
+        </CardContent>
+        <CardActions>
+          <Button color="primary" variant="contained" onClick={clickSubmit}>
             Confirm
           </Button>
-        </DialogActions>
-      </Dialog>
-    </span>
+          <Link to={'/seller/shops'}>
+            <Button variant="contained">Cancel</Button>
+          </Link>
+        </CardActions>
+      </CardStyled>
+    </Root>
   );
-}
-DeleteProduct.propTypes = {
-  shopId: PropTypes.string.isRequired,
-  product: PropTypes.object.isRequired,
-  onRemove: PropTypes.func.isRequired,
 };
+
+export default DeleteProduct;

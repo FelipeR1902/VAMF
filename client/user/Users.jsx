@@ -1,58 +1,65 @@
-import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
-import { makeStyles } from "@mui/material/styles";
-import Card from "@mui/material/Card";
-import Paper from "@mui/material/Paper";
-import List from "@mui/material/List";
-import { list } from "./api-user.js";
-import { Link as RouterLink } from "react-router-dom";
-import Link from "@mui/material/Link";
-import ListItem from "@mui/material/ListItem";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
-import IconButton from "@mui/material/IconButton";
-import Avatar from "@mui/material/Avatar";
-//import Person from '@mui/material/Person'
-//import ArrowForward from '@mui/material/ArrowForward'
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
-//import ArrowForward from '@mui/material/ArrowForward'
-import ArrowForward from "@mui/icons-material/ArrowForward";
-import unicornbikeImg from "./../assets/images/unicornbikeImg.jpg";
-const useStyles = makeStyles((theme) => ({
-  card: {
-    // Define your card styles here
-  },
-  textField: {
-    // Define your text field styles here
-  },
-  error: {
-    // Define your error icon styles here
-  },
-  submit: {
-    // Define your submit button styles here
-  },
-  title: {
-    // Define your title styles here
-  },
-  root: {
-    // Define your root styles here
-  },
-}));
-export default function Users() {
+import React, { useEffect, useState } from 'react';
+import styled from '@emotion/styled';
+import { list } from './api-user.js';
+import {
+  Link,
+} from 'react-router-dom';
+import {
+  Card,
+  CardActions,
+  CardContent,
+  Button,
+  Typography,
+  Icon,
+  Avatar,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemSecondaryAction,
+  ListItemText,
+  IconButton,
+  Divider,
+} from '@mui/material';
+import {
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+} from '@mui/icons-material';
+
+const Root = styled.div`
+  padding: 16px;
+`;
+
+const Title = styled(Typography)`
+  margin-top: 16px;
+  color: #2e7d32;
+  font-size: 1.2em;
+`;
+
+const Error = styled(Typography)`
+  color: red;
+`;
+
+const ButtonStyled = styled(Button)`
+  margin: 16px;
+`;
+
+const AvatarStyled = styled(Avatar)`
+  width: 60px;
+  height: 60px;
+  margin: auto;
+`;
+
+const Users = () => {
   const [users, setUsers] = useState([]);
+
   useEffect(() => {
     const abortController = new AbortController();
     const signal = abortController.signal;
+
     list(signal).then((data) => {
-      console.log(data);
       if (data && data.error) {
-        console.log(data.error);
+        setUsers([]);
       } else {
-        console.log(data);
         setUsers(data);
       }
     });
@@ -61,31 +68,43 @@ export default function Users() {
     };
   }, []);
 
-  const classes = useStyles();
   return (
-    <Paper className={classes.root} elevation={4}>
-      <Typography variant="h6" className={classes.title}>
-        All Users
-      </Typography>
-      <List dense>
-        {users.map((item, i) => {
-          return (
-            <Link component={RouterLink} to={"/user/" + item._id} key={i}>
-              <ListItem button>
-                <ListItemAvatar>
-                  <Avatar></Avatar>
-                </ListItemAvatar>
-                <ListItemText primary={item.name} />
-                <ListItemSecondaryAction>
-                  <IconButton>
-                    <ArrowForward />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            </Link>
-          );
-        })}
-      </List>
-    </Paper>
+    <Root>
+      <Title>All Users</Title>
+      <Card>
+        <CardContent>
+          <List dense>
+            {users.map((user, i) => (
+              <span key={i}>
+                <ListItem>
+                  <ListItemAvatar>
+                    <AvatarStyled src={`/api/users/photo/${user._id}`} />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={user.name}
+                    secondary={user.email}
+                  />
+                  <ListItemSecondaryAction>
+                    <Link to={`/user/edit/${user._id}`}>
+                      <IconButton aria-label="Edit" color="primary">
+                        <EditIcon />
+                      </IconButton>
+                    </Link>
+                    <Link to={`/user/delete/${user._id}`}>
+                      <IconButton aria-label="Delete" color="secondary">
+                        <DeleteIcon />
+                      </IconButton>
+                    </Link>
+                  </ListItemSecondaryAction>
+                </ListItem>
+                <Divider />
+              </span>
+            ))}
+          </List>
+        </CardContent>
+      </Card>
+    </Root>
   );
-}
+};
+
+export default Users;

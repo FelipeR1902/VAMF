@@ -1,61 +1,67 @@
-import React, { useState, useEffect } from "react";
-import { makeStyles } from "@mui/material/styles";
-import Paper from "@mui/material/Paper";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
-import ListItemText from "@mui/material/ListItemText";
-import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
-import Icon from "@mui/material/Icon";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Edit from "@mui/icons-material/Edit";
-import Divider from "@mui/material/Divider";
-import auth from "../lib/auth-helper.js";
-import { listByOwner } from "./api-shop.js";
-import { Navigate, Link } from "react-router-dom";
-import DeleteShop from "./DeleteShop";
+import React, { useEffect, useState } from 'react';
+import auth from '../lib/auth-helper';
+import { listByOwner } from './api-shop.js';
+import {
+  Link,
+  Navigate,
+} from 'react-router-dom';
+import styled from '@emotion/styled';
+import {
+  Card,
+  CardActions,
+  CardContent,
+  Button,
+  Typography,
+  Icon,
+  Avatar,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemSecondaryAction,
+  ListItemText,
+  IconButton,
+  Divider,
+} from '@mui/material';
+import {
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+} from '@mui/icons-material';
 
-const useStyles = makeStyles((theme) => ({
-  root: theme.mixins.gutters({
-    maxWidth: 600,
-    margin: "auto",
-    padding: theme.spacing(3),
-    marginTop: theme.spacing(5),
-  }),
-  title: {
-    margin: `${theme.spacing(3)}px 0 ${theme.spacing(3)}px ${theme.spacing(1)}px`,
-    color: theme.palette.protectedTitle,
-    fontSize: "1.2em",
-  },
-  addButton: {
-    float: "right",
-  },
-  leftIcon: {
-    marginRight: "8px",
-  },
-}));
+const Root = styled.div`
+  padding: 16px;
+`;
 
-export default function MyShops() {
-  const classes = useStyles();
+const Title = styled(Typography)`
+  margin-top: 16px;
+  color: #2e7d32;
+  font-size: 1.2em;
+`;
+
+const Error = styled(Typography)`
+  color: red;
+`;
+
+const ButtonStyled = styled(Button)`
+  margin: 16px;
+`;
+
+const AvatarStyled = styled(Avatar)`
+  width: 60px;
+  height: 60px;
+  margin: auto;
+`;
+
+const MyShops = () => {
   const [shops, setShops] = useState([]);
-  const [redirectToSignin, setRedirectToSignin] = useState(false);
-  const jwt = auth.isAuthenticated();
+  const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
     const abortController = new AbortController();
     const signal = abortController.signal;
-    listByOwner(
-      {
-        userId: jwt.user._id,
-      },
-      { t: jwt.token },
-      signal,
-    ).then((data) => {
-      if (data.error) {
-        setRedirectToSignin(true);
+
+    listByOwner({ userId: auth.isAuthenticated().user._id }, signal).then((data) => {
+      if (data && data.error) {
+        setRedirect(true);
       } else {
         setShops(data);
       }
@@ -65,66 +71,47 @@ export default function MyShops() {
     };
   }, []);
 
-  const removeShop = (shop) => {
-    const updatedShops = [...shops];
-    const index = updatedShops.indexOf(shop);
-    updatedShops.splice(index, 1);
-    setShops(updatedShops);
-  };
-
-  if (redirectToSignin) {
-    return <Navigate to="/signin" />;
+  if (redirect) {
+    return <Navigate to={'/'} />;
   }
+
   return (
-    <div>
-      <Paper className={classes.root} elevation={4}>
-        <Typography type="title" className={classes.title}>
-          Your Shops
-          <span className={classes.addButton}>
-            <Link to="/seller/shop/new">
-              <Button color="primary" variant="contained">
-                <Icon className={classes.leftIcon}>add_box</Icon> New Shop
-              </Button>
-            </Link>
-          </span>
-        </Typography>
-        <List dense>
-          {shops.map((shop, i) => {
-            return (
+    <Root>
+      <Title>My Shops</Title>
+      <Card>
+        <CardContent>
+          <List dense>
+            {shops.map((shop, i) => (
               <span key={i}>
-                <ListItem button>
+                <ListItem>
                   <ListItemAvatar>
-                    <Avatar
-                      src={
-                        "/api/shops/logo/" +
-                        shop._id +
-                        "?" +
-                        new Date().getTime()
-                      }
-                    />
+                    <AvatarStyled src={`/api/shops/logo/${shop._id}`} />
                   </ListItemAvatar>
                   <ListItemText
                     primary={shop.name}
                     secondary={shop.description}
                   />
-                  {auth.isAuthenticated().user &&
-                    auth.isAuthenticated().user._id == shop.owner._id && (
-                      <ListItemSecondaryAction>
-                        <Link to={"/seller/shop/edit/" + shop._id}>
-                          <IconButton aria-label="Edit" color="primary">
-                            <Edit />
-                          </IconButton>
-                        </Link>
-                        <DeleteShop shop={shop} onRemove={removeShop} />
-                      </ListItemSecondaryAction>
-                    )}
+                  <ListItemSecondaryAction>
+                    <Link to={`/seller/shop/edit/${shop._id}`}>
+                      <IconButton aria-label="Edit" color="primary">
+                        <EditIcon />
+                      </IconButton>
+                    </Link>
+                    <Link to={`/seller/shop/delete/${shop._id}`}>
+                      <IconButton aria-label="Delete" color="secondary">
+                        <DeleteIcon />
+                      </IconButton>
+                    </Link>
+                  </ListItemSecondaryAction>
                 </ListItem>
                 <Divider />
               </span>
-            );
-          })}
-        </List>
-      </Paper>
-    </div>
+            ))}
+          </List>
+        </CardContent>
+      </Card>
+    </Root>
   );
-}
+};
+
+export default MyShops;

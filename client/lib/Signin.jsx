@@ -6,42 +6,46 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Icon from "@mui/material/Icon";
-import { makeStyles } from "@mui/material/styles";
+import styled from '@emotion/styled';
 import auth from "./auth-helper.js";
 import { Navigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { signin } from "./api-auth.js";
 
-const useStyles = makeStyles((theme) => ({
-  card: {
-    maxWidth: 600,
-    margin: "auto",
-    textAlign: "center",
-    marginTop: theme.spacing(5),
-    paddingBottom: theme.spacing(2),
-  },
-  error: {
-    verticalAlign: "middle",
-  },
-  title: {
-    marginTop: theme.spacing(2),
-    color: theme.palette.openTitle,
-  },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 300,
-  },
-  submit: {
-    margin: "auto",
-    marginBottom: theme.spacing(2),
-  },
-}));
+const Root = styled.div`
+  margin: 24px;
+`;
+
+const CardStyled = styled(Card)`
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+  margin-top: 24px;
+  padding-bottom: 24px;
+`;
+
+const Title = styled(Typography)`
+  margin-top: 16px;
+  color: #2e7d32;
+  font-size: 1.2em;
+`;
+
+const Error = styled(Typography)`
+  color: red;
+`;
+
+const TextFieldStyled = styled(TextField)`
+  margin-left: 8px;
+  margin-right: 8px;
+  width: 300px;
+`;
+
+const ButtonStyled = styled(Button)`
+  margin: 16px;
+`;
 
 export default function Signin(props) {
   const location = useLocation();
-  console.log(location.state);
-  const classes = useStyles();
   const [values, setValues] = useState({
     email: "",
     password: "",
@@ -54,12 +58,10 @@ export default function Signin(props) {
       email: values.email || undefined,
       password: values.password || undefined,
     };
-    console.log(user);
     signin(user).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error });
       } else {
-        console.log(data);
         auth.authenticate(data, () => {
           setValues({ ...values, error: "", redirectToReferrer: true });
         });
@@ -82,50 +84,49 @@ export default function Signin(props) {
   }
 
   return (
-    <Card className={classes.card}>
-      <CardContent>
-        <Typography variant="h6" className={classes.title}>
-          Sign In
-        </Typography>
-        <TextField
-          id="email"
-          type="email"
-          label="Email"
-          className={classes.textField}
-          value={values.email}
-          onChange={handleChange("email")}
-          margin="normal"
-        />
-        <br />
-        <TextField
-          id="password"
-          type="password"
-          label="Password"
-          className={classes.textField}
-          value={values.password}
-          onChange={handleChange("password")}
-          margin="normal"
-        />
-        <br />{" "}
-        {values.error && (
-          <Typography component="p" color="error">
-            <Icon color="error" className={classes.error}>
-              error
-            </Icon>
-            {values.error}
-          </Typography>
-        )}
-      </CardContent>
-      <CardActions>
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={clickSubmit}
-          className={classes.submit}
-        >
-          Submit
-        </Button>
-      </CardActions>
-    </Card>
+    <Root>
+      <CardStyled>
+        <CardContent>
+          <Title variant="h6">
+            Sign In
+          </Title>
+          <TextFieldStyled
+            id="email"
+            type="email"
+            label="Email"
+            value={values.email}
+            onChange={handleChange("email")}
+            margin="normal"
+          />
+          <br />
+          <TextFieldStyled
+            id="password"
+            type="password"
+            label="Password"
+            value={values.password}
+            onChange={handleChange("password")}
+            margin="normal"
+          />
+          <br /> 
+          {values.error && (
+            <Error component="p" color="error">
+              <Icon color="error">
+                error
+              </Icon>
+              {values.error}
+            </Error>
+          )}
+        </CardContent>
+        <CardActions>
+          <ButtonStyled
+            color="primary"
+            variant="contained"
+            onClick={clickSubmit}
+          >
+            Submit
+          </ButtonStyled>
+        </CardActions>
+      </CardStyled>
+    </Root>
   );
 }

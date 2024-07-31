@@ -1,144 +1,129 @@
-import React, { useState } from "react";
-import { makeStyles } from "@mui/material/styles";
+import React, { useState } from 'react';
+import styled from '@emotion/styled';
+import { create } from './api-user.js';
 import {
   Card,
-  CardContent,
-  Typography,
-  TextField,
   CardActions,
+  CardContent,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-} from "@mui/material";
-import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import { create } from "./api-user";
-const useStyles = makeStyles((theme) => ({
-  card: {
-    maxWidth: 400,
-    margin: "0 auto",
-    marginTop: theme.spacing(3),
-    padding: theme.spacing(2),
-    textAlign: "center",
-  },
-  textField: {
-    width: "100%",
-    marginBottom: theme.spacing(2),
-  },
-  error: {
-    color: "red",
-  },
-  submit: {
-    margin: "0 auto",
-    marginBottom: theme.spacing(2),
-  },
-  title: {
-    fontSize: 18,
-  },
-}));
-// const create = async (user) => {
-//  return { error: null }; // Simulated API call
-// };
-export default function Signup() {
-  const classes = useStyles();
+  TextField,
+  Typography,
+  Icon,
+} from '@mui/material';
+
+const Root = styled.div`
+  padding: 16px;
+`;
+
+const CardStyled = styled(Card)`
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+  margin-top: 24px;
+  padding-bottom: 24px;
+`;
+
+const Title = styled(Typography)`
+  margin-top: 16px;
+  color: #2e7d32;
+  font-size: 1.2em;
+`;
+
+const Error = styled(Typography)`
+  color: red;
+`;
+
+const TextFieldStyled = styled(TextField)`
+  margin-left: 8px;
+  margin-right: 8px;
+  width: 300px;
+`;
+
+const ButtonStyled = styled(Button)`
+  margin: 16px;
+`;
+
+const Signup = () => {
   const [values, setValues] = useState({
-    name: "",
-    password: "",
-    email: "",
+    name: '',
+    email: '',
+    password: '',
+    error: '',
+    open: false,
   });
-  const [open, setOpen] = useState(false);
+
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
   };
-  const handleClose = () => {
-    setOpen(false);
-  };
+
   const clickSubmit = () => {
     const user = {
       name: values.name || undefined,
       email: values.email || undefined,
       password: values.password || undefined,
     };
+
     create(user).then((data) => {
-      if (data.error) {
+      if (data && data.error) {
         setValues({ ...values, error: data.error });
       } else {
-        setOpen(true);
+        setValues({ ...values, error: '', open: true });
       }
     });
   };
-  Signup.propTypes = {
-    open: PropTypes.bool.isRequired,
-    handleClose: PropTypes.func.isRequired,
-  };
-  return (
-    <div>
-      <Card className={classes.card}>
-        <CardContent>
-          <Typography variant="h6" className={classes.title}>
-            Sign Up
-          </Typography>
 
-          <TextField
+  return (
+    <Root>
+      <CardStyled>
+        <CardContent>
+          <Title>Sign Up</Title>
+          <TextFieldStyled
             id="name"
             label="Name"
-            className={classes.textField}
             value={values.name}
-            onChange={handleChange("name")}
-            margin="normal"
+            onChange={handleChange('name')}
           />
-          <TextField
+          <br />
+          <TextFieldStyled
             id="email"
+            type="email"
             label="Email"
-            className={classes.textField}
             value={values.email}
-            onChange={handleChange("email")}
-            margin="normal"
+            onChange={handleChange('email')}
           />
-          <TextField
+          <br />
+          <TextFieldStyled
             id="password"
-            label="Password"
-            className={classes.textField}
-            value={values.password}
-            onChange={handleChange("password")}
             type="password"
-            margin="normal"
+            label="Password"
+            value={values.password}
+            onChange={handleChange('password')}
           />
+          <br />
+          {values.error && (
+            <Error component="p">
+              <Icon color="error">error</Icon>
+              {values.error}
+            </Error>
+          )}
         </CardContent>
         <CardActions>
-          <Button
+          <ButtonStyled
             color="primary"
             variant="contained"
             onClick={clickSubmit}
-            className={classes.submit}
           >
-            Submit
-          </Button>
+            Sign Up
+          </ButtonStyled>
         </CardActions>
-      </Card>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>New Account</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            New account successfully created.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Link to="/Signin">
-            <Button
-              color="primary"
-              autoFocus
-              variant="contained"
-              onClick={handleClose}
-            >
-              Sign In
-            </Button>
-          </Link>
-        </DialogActions>
-      </Dialog>
-    </div>
+      </CardStyled>
+      {values.open && (
+        <Typography variant="h6" color="primary">
+          New account successfully created.
+        </Typography>
+      )}
+    </Root>
   );
-}
+};
+
+export default Signup;

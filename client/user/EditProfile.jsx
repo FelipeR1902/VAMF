@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import auth from '../lib/auth-helper';
-import styled from '@emotion/styled';
-import { read, update } from './api-user.js';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import auth from "../lib/auth-helper";
+import styled from "@emotion/styled";
+import { read, update } from "./api-user.js";
+import { Link, Navigate, useParams } from "react-router-dom";
 import {
   Card,
   CardActions,
@@ -12,7 +12,7 @@ import {
   Typography,
   Icon,
   Avatar,
-} from '@mui/material';
+} from "@mui/material";
 
 const Root = styled.div`
   padding: 16px;
@@ -54,11 +54,11 @@ const AvatarStyled = styled(Avatar)`
 
 const EditProfile = () => {
   const [values, setValues] = useState({
-    name: '',
-    email: '',
-    password: '',
+    name: "",
+    email: "",
+    password: "",
     redirectToProfile: false,
-    error: '',
+    error: "",
   });
   const { userId } = useParams();
 
@@ -101,7 +101,7 @@ const EditProfile = () => {
       {
         t: jwt.token,
       },
-      user
+      user,
     ).then((data) => {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
@@ -124,7 +124,7 @@ const EditProfile = () => {
             id="name"
             label="Name"
             value={values.name}
-            onChange={handleChange('name')}
+            onChange={handleChange("name")}
           />
           <br />
           <TextFieldStyled
@@ -132,7 +132,7 @@ const EditProfile = () => {
             type="email"
             label="Email"
             value={values.email}
-            onChange={handleChange('email')}
+            onChange={handleChange("email")}
           />
           <br />
           <TextFieldStyled
@@ -140,7 +140,7 @@ const EditProfile = () => {
             type="password"
             label="Password"
             value={values.password}
-            onChange={handleChange('password')}
+            onChange={handleChange("password")}
           />
           <br />
           {values.error && (

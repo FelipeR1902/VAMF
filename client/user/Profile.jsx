@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import auth from '../lib/auth-helper';
-import styled from '@emotion/styled';
-import { read } from './api-user.js';
-import { Navigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import auth from "../lib/auth-helper";
+import styled from "@emotion/styled";
+import { read } from "./api-user.js";
+import { Navigate, useParams } from "react-router-dom";
 import {
   Card,
   CardActions,
@@ -11,7 +11,7 @@ import {
   Typography,
   Icon,
   Avatar,
-} from '@mui/material';
+} from "@mui/material";
 
 const Root = styled.div`
   padding: 16px;
@@ -45,7 +45,7 @@ const Profile = () => {
   const [values, setValues] = useState({
     user: {},
     redirectToSignin: false,
-    error: '',
+    error: "",
   });
   const { userId } = useParams();
 

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import auth from '../lib/auth-helper';
-import styled from '@emotion/styled';
-import { read, update } from './api-shop.js';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import auth from "../lib/auth-helper";
+import styled from "@emotion/styled";
+import { read, update } from "./api-shop.js";
+import { Link, Navigate, useParams } from "react-router-dom";
 import {
   Card,
   CardActions,
@@ -12,7 +12,7 @@ import {
   Typography,
   Icon,
   Avatar,
-} from '@mui/material';
+} from "@mui/material";
 
 const Root = styled.div`
   padding: 16px;
@@ -54,11 +54,11 @@ const AvatarStyled = styled(Avatar)`
 
 const EditShop = () => {
   const [values, setValues] = useState({
-    name: '',
-    description: '',
-    image: '',
+    name: "",
+    description: "",
+    image: "",
     redirectToProfile: false,
-    error: '',
+    error: "",
   });
   const { shopId } = useParams();
 
@@ -83,16 +83,16 @@ const EditShop = () => {
   }, [shopId]);
 
   const handleChange = (name) => (event) => {
-    const value = name === 'image' ? event.target.files[0] : event.target.value;
+    const value = name === "image" ? event.target.files[0] : event.target.value;
     setValues({ ...values, [name]: value });
   };
 
   const clickSubmit = () => {
     const jwt = auth.isAuthenticated();
     const shopData = new FormData();
-    values.name && shopData.append('name', values.name);
-    values.description && shopData.append('description', values.description);
-    values.image && shopData.append('image', values.image);
+    values.name && shopData.append("name", values.name);
+    values.description && shopData.append("description", values.description);
+    values.image && shopData.append("image", values.image);
 
     update(
       {
@@ -101,7 +101,7 @@ const EditShop = () => {
       {
         t: jwt.token,
       },
-      shopData
+      shopData,
     ).then((data) => {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
@@ -112,7 +112,7 @@ const EditShop = () => {
   };
 
   if (values.redirectToProfile) {
-    return <Navigate to={'/seller/shops'} />;
+    return <Navigate to={"/seller/shops"} />;
   }
 
   return (
@@ -124,13 +124,13 @@ const EditShop = () => {
           <input
             accept="image/*"
             type="file"
-            onChange={handleChange('image')}
+            onChange={handleChange("image")}
           />
           <TextFieldStyled
             id="name"
             label="Name"
             value={values.name}
-            onChange={handleChange('name')}
+            onChange={handleChange("name")}
           />
           <br />
           <TextFieldStyled
@@ -139,7 +139,7 @@ const EditShop = () => {
             multiline
             rows="2"
             value={values.description}
-            onChange={handleChange('description')}
+            onChange={handleChange("description")}
           />
           <br />
           {values.error && (
@@ -157,7 +157,7 @@ const EditShop = () => {
           >
             Update
           </ButtonStyled>
-          <Link to={'/seller/shops'}>
+          <Link to={"/seller/shops"}>
             <ButtonStyled variant="contained">Cancel</ButtonStyled>
           </Link>
         </CardActions>

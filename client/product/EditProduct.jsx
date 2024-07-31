@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import auth from '../lib/auth-helper';
-import FileUpload from '@mui/icons-material/AddPhotoAlternate';
-import styled from '@emotion/styled';
-import { read, update } from './api-product.js';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import auth from "../lib/auth-helper";
+import FileUpload from "@mui/icons-material/AddPhotoAlternate";
+import styled from "@emotion/styled";
+import { read, update } from "./api-product.js";
+import { Link, Navigate, useParams } from "react-router-dom";
 import {
   Card,
   CardActions,
@@ -13,7 +13,7 @@ import {
   Typography,
   Icon,
   Avatar,
-} from '@mui/material';
+} from "@mui/material";
 
 const Root = styled.div`
   padding: 16px;
@@ -55,14 +55,14 @@ const AvatarStyled = styled(Avatar)`
 
 const EditProduct = () => {
   const [values, setValues] = useState({
-    name: '',
-    description: '',
-    image: '',
-    category: '',
-    quantity: '',
-    price: '',
+    name: "",
+    description: "",
+    image: "",
+    category: "",
+    quantity: "",
+    price: "",
     redirectToProfile: false,
-    error: '',
+    error: "",
   });
   const { productId } = useParams();
 
@@ -90,19 +90,19 @@ const EditProduct = () => {
   }, [productId]);
 
   const handleChange = (name) => (event) => {
-    const value = name === 'image' ? event.target.files[0] : event.target.value;
+    const value = name === "image" ? event.target.files[0] : event.target.value;
     setValues({ ...values, [name]: value });
   };
 
   const clickSubmit = () => {
     const jwt = auth.isAuthenticated();
     const productData = new FormData();
-    values.name && productData.append('name', values.name);
-    values.description && productData.append('description', values.description);
-    values.category && productData.append('category', values.category);
-    values.quantity && productData.append('quantity', values.quantity);
-    values.price && productData.append('price', values.price);
-    values.image && productData.append('image', values.image);
+    values.name && productData.append("name", values.name);
+    values.description && productData.append("description", values.description);
+    values.category && productData.append("category", values.category);
+    values.quantity && productData.append("quantity", values.quantity);
+    values.price && productData.append("price", values.price);
+    values.image && productData.append("image", values.image);
 
     update(
       {
@@ -111,7 +111,7 @@ const EditProduct = () => {
       {
         t: jwt.token,
       },
-      productData
+      productData,
     ).then((data) => {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
@@ -122,7 +122,7 @@ const EditProduct = () => {
   };
 
   if (values.redirectToProfile) {
-    return <Navigate to={'/seller/shops'} />;
+    return <Navigate to={"/seller/shops"} />;
   }
 
   return (
@@ -134,13 +134,13 @@ const EditProduct = () => {
           <input
             accept="image/*"
             type="file"
-            onChange={handleChange('image')}
+            onChange={handleChange("image")}
           />
           <TextFieldStyled
             id="name"
             label="Name"
             value={values.name}
-            onChange={handleChange('name')}
+            onChange={handleChange("name")}
           />
           <br />
           <TextFieldStyled
@@ -149,21 +149,21 @@ const EditProduct = () => {
             multiline
             rows="2"
             value={values.description}
-            onChange={handleChange('description')}
+            onChange={handleChange("description")}
           />
           <br />
           <TextFieldStyled
             id="category"
             label="Category"
             value={values.category}
-            onChange={handleChange('category')}
+            onChange={handleChange("category")}
           />
           <br />
           <TextFieldStyled
             id="quantity"
             label="Quantity"
             value={values.quantity}
-            onChange={handleChange('quantity')}
+            onChange={handleChange("quantity")}
             type="number"
           />
           <br />
@@ -171,7 +171,7 @@ const EditProduct = () => {
             id="price"
             label="Price"
             value={values.price}
-            onChange={handleChange('price')}
+            onChange={handleChange("price")}
             type="number"
           />
           <br />
@@ -190,7 +190,7 @@ const EditProduct = () => {
           >
             Update
           </ButtonStyled>
-          <Link to={'/seller/shops'}>
+          <Link to={"/seller/shops"}>
             <ButtonStyled variant="contained">Cancel</ButtonStyled>
           </Link>
         </CardActions>

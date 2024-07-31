@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import styled from '@emotion/styled';
-import { create } from './api-user.js';
+import React, { useState } from "react";
+import styled from "@emotion/styled";
+import { create } from "./api-user.js";
 import {
   Card,
   CardActions,
@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
   Icon,
-} from '@mui/material';
+} from "@mui/material";
 
 const Root = styled.div`
   padding: 16px;
@@ -45,10 +45,10 @@ const ButtonStyled = styled(Button)`
 
 const Signup = () => {
   const [values, setValues] = useState({
-    name: '',
-    email: '',
-    password: '',
-    error: '',
+    name: "",
+    email: "",
+    password: "",
+    error: "",
     open: false,
   });
 
@@ -67,7 +67,7 @@ const Signup = () => {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
       } else {
-        setValues({ ...values, error: '', open: true });
+        setValues({ ...values, error: "", open: true });
       }
     });
   };
@@ -81,7 +81,7 @@ const Signup = () => {
             id="name"
             label="Name"
             value={values.name}
-            onChange={handleChange('name')}
+            onChange={handleChange("name")}
           />
           <br />
           <TextFieldStyled
@@ -89,7 +89,7 @@ const Signup = () => {
             type="email"
             label="Email"
             value={values.email}
-            onChange={handleChange('email')}
+            onChange={handleChange("email")}
           />
           <br />
           <TextFieldStyled
@@ -97,7 +97,7 @@ const Signup = () => {
             type="password"
             label="Password"
             value={values.password}
-            onChange={handleChange('password')}
+            onChange={handleChange("password")}
           />
           <br />
           {values.error && (

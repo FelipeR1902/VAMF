@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import auth from '../lib/auth-helper';
-import { listByOwner } from './api-shop.js';
-import {
-  Link,
-  Navigate,
-} from 'react-router-dom';
-import styled from '@emotion/styled';
+import React, { useEffect, useState } from "react";
+import auth from "../lib/auth-helper";
+import { listByOwner } from "./api-shop.js";
+import { Link, Navigate } from "react-router-dom";
+import styled from "@emotion/styled";
 import {
   Card,
   CardActions,
@@ -21,11 +18,8 @@ import {
   ListItemText,
   IconButton,
   Divider,
-} from '@mui/material';
-import {
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-} from '@mui/icons-material';
+} from "@mui/material";
+import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 
 const Root = styled.div`
   padding: 16px;
@@ -59,20 +53,22 @@ const MyShops = () => {
     const abortController = new AbortController();
     const signal = abortController.signal;
 
-    listByOwner({ userId: auth.isAuthenticated().user._id }, signal).then((data) => {
-      if (data && data.error) {
-        setRedirect(true);
-      } else {
-        setShops(data);
-      }
-    });
+    listByOwner({ userId: auth.isAuthenticated().user._id }, signal).then(
+      (data) => {
+        if (data && data.error) {
+          setRedirect(true);
+        } else {
+          setShops(data);
+        }
+      },
+    );
     return function cleanup() {
       abortController.abort();
     };
   }, []);
 
   if (redirect) {
-    return <Navigate to={'/'} />;
+    return <Navigate to={"/"} />;
   }
 
   return (

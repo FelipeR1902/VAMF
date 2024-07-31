@@ -1,5 +1,5 @@
 import React from "react";
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
@@ -24,9 +24,7 @@ const Media = styled(CardMedia)`
 export default function Home() {
   return (
     <CardStyled>
-      <Title variant="h6">
-        Home Page
-      </Title>
+      <Title variant="h6">Home Page</Title>
       <Media image={logo} title="Logo" />
       <CardContent>
         <Typography variant="body2" component="p">

@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Icon from "@mui/material/Icon";
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 import auth from "./auth-helper.js";
 import { Navigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
@@ -87,9 +87,7 @@ export default function Signin(props) {
     <Root>
       <CardStyled>
         <CardContent>
-          <Title variant="h6">
-            Sign In
-          </Title>
+          <Title variant="h6">Sign In</Title>
           <TextFieldStyled
             id="email"
             type="email"
@@ -107,12 +105,10 @@ export default function Signin(props) {
             onChange={handleChange("password")}
             margin="normal"
           />
-          <br /> 
+          <br />
           {values.error && (
             <Error component="p" color="error">
-              <Icon color="error">
-                error
-              </Icon>
+              <Icon color="error">error</Icon>
               {values.error}
             </Error>
           )}

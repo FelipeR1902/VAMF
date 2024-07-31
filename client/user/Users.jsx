@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
-import { list } from './api-user.js';
-import {
-  Link,
-} from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import styled from "@emotion/styled";
+import { list } from "./api-user.js";
+import { Link } from "react-router-dom";
 import {
   Card,
   CardActions,
@@ -19,11 +17,8 @@ import {
   ListItemText,
   IconButton,
   Divider,
-} from '@mui/material';
-import {
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-} from '@mui/icons-material';
+} from "@mui/material";
+import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 
 const Root = styled.div`
   padding: 16px;
@@ -80,10 +75,7 @@ const Users = () => {
                   <ListItemAvatar>
                     <AvatarStyled src={`/api/users/photo/${user._id}`} />
                   </ListItemAvatar>
-                  <ListItemText
-                    primary={user.name}
-                    secondary={user.email}
-                  />
+                  <ListItemText primary={user.name} secondary={user.email} />
                   <ListItemSecondaryAction>
                     <Link to={`/user/edit/${user._id}`}>
                       <IconButton aria-label="Edit" color="primary">

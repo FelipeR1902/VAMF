@@ -1,11 +1,8 @@
-import React, { useState } from 'react';
-import auth from '../lib/auth-helper';
-import { create } from './api-shop.js';
-import {
-  Link,
-  Navigate,
-} from 'react-router-dom';
-import styled from '@emotion/styled';
+import React, { useState } from "react";
+import auth from "../lib/auth-helper";
+import { create } from "./api-shop.js";
+import { Link, Navigate } from "react-router-dom";
+import styled from "@emotion/styled";
 import {
   Card,
   CardActions,
@@ -15,8 +12,8 @@ import {
   Typography,
   Icon,
   Avatar,
-} from '@mui/material';
-import FileUpload from '@mui/icons-material/AddPhotoAlternate';
+} from "@mui/material";
+import FileUpload from "@mui/icons-material/AddPhotoAlternate";
 
 const Root = styled.div`
   padding: 16px;
@@ -58,24 +55,24 @@ const AvatarStyled = styled(Avatar)`
 
 const NewShop = () => {
   const [values, setValues] = useState({
-    name: '',
-    description: '',
-    image: '',
+    name: "",
+    description: "",
+    image: "",
     redirect: false,
-    error: '',
+    error: "",
   });
 
   const handleChange = (name) => (event) => {
-    const value = name === 'image' ? event.target.files[0] : event.target.value;
+    const value = name === "image" ? event.target.files[0] : event.target.value;
     setValues({ ...values, [name]: value });
   };
 
   const clickSubmit = () => {
     const jwt = auth.isAuthenticated();
     const shopData = new FormData();
-    values.name && shopData.append('name', values.name);
-    values.description && shopData.append('description', values.description);
-    values.image && shopData.append('image', values.image);
+    values.name && shopData.append("name", values.name);
+    values.description && shopData.append("description", values.description);
+    values.image && shopData.append("image", values.image);
 
     create(
       {
@@ -84,7 +81,7 @@ const NewShop = () => {
       {
         t: jwt.token,
       },
-      shopData
+      shopData,
     ).then((data) => {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
@@ -107,13 +104,13 @@ const NewShop = () => {
           <input
             accept="image/*"
             type="file"
-            onChange={handleChange('image')}
+            onChange={handleChange("image")}
           />
           <TextFieldStyled
             id="name"
             label="Name"
             value={values.name}
-            onChange={handleChange('name')}
+            onChange={handleChange("name")}
           />
           <br />
           <TextFieldStyled
@@ -122,7 +119,7 @@ const NewShop = () => {
             multiline
             rows="2"
             value={values.description}
-            onChange={handleChange('description')}
+            onChange={handleChange("description")}
           />
           <br />
           {values.error && (

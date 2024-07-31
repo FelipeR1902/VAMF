@@ -1,4 +1,3 @@
-
 # VAMF Project
 
 This project is a Vite-based web application. Follow the instructions below to get started.
@@ -62,5 +61,5 @@ VAMF/
 │   ├── index.html  # Main HTML file
 │   ├── package.json
 │   └── vite.config.js
-└── server/         # Backend application 
+└── server/         # Backend application
 ```

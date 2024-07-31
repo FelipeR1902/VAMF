@@ -1,12 +1,8 @@
-import React, { useState } from 'react';
-import auth from '../lib/auth-helper';
-import { create } from './api-product.js';
-import {
-  Link,
-  Navigate,
-  useParams,
-} from 'react-router-dom';
-import styled from '@emotion/styled';
+import React, { useState } from "react";
+import auth from "../lib/auth-helper";
+import { create } from "./api-product.js";
+import { Link, Navigate, useParams } from "react-router-dom";
+import styled from "@emotion/styled";
 import {
   Card,
   CardActions,
@@ -16,8 +12,8 @@ import {
   Typography,
   Icon,
   Avatar,
-} from '@mui/material';
-import FileUpload from '@mui/icons-material/AddPhotoAlternate';
+} from "@mui/material";
+import FileUpload from "@mui/icons-material/AddPhotoAlternate";
 
 const Root = styled.div`
   padding: 16px;
@@ -59,31 +55,31 @@ const AvatarStyled = styled(Avatar)`
 
 const NewProduct = () => {
   const [values, setValues] = useState({
-    name: '',
-    description: '',
-    image: '',
-    category: '',
-    quantity: '',
-    price: '',
+    name: "",
+    description: "",
+    image: "",
+    category: "",
+    quantity: "",
+    price: "",
     redirect: false,
-    error: '',
+    error: "",
   });
   const { shopId } = useParams();
 
   const handleChange = (name) => (event) => {
-    const value = name === 'image' ? event.target.files[0] : event.target.value;
+    const value = name === "image" ? event.target.files[0] : event.target.value;
     setValues({ ...values, [name]: value });
   };
 
   const clickSubmit = () => {
     const jwt = auth.isAuthenticated();
     const productData = new FormData();
-    values.name && productData.append('name', values.name);
-    values.description && productData.append('description', values.description);
-    values.category && productData.append('category', values.category);
-    values.quantity && productData.append('quantity', values.quantity);
-    values.price && productData.append('price', values.price);
-    values.image && productData.append('image', values.image);
+    values.name && productData.append("name", values.name);
+    values.description && productData.append("description", values.description);
+    values.category && productData.append("category", values.category);
+    values.quantity && productData.append("quantity", values.quantity);
+    values.price && productData.append("price", values.price);
+    values.image && productData.append("image", values.image);
 
     create(
       {
@@ -92,7 +88,7 @@ const NewProduct = () => {
       {
         t: jwt.token,
       },
-      productData
+      productData,
     ).then((data) => {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
@@ -115,13 +111,13 @@ const NewProduct = () => {
           <input
             accept="image/*"
             type="file"
-            onChange={handleChange('image')}
+            onChange={handleChange("image")}
           />
           <TextFieldStyled
             id="name"
             label="Name"
             value={values.name}
-            onChange={handleChange('name')}
+            onChange={handleChange("name")}
           />
           <br />
           <TextFieldStyled
@@ -130,21 +126,21 @@ const NewProduct = () => {
             multiline
             rows="2"
             value={values.description}
-            onChange={handleChange('description')}
+            onChange={handleChange("description")}
           />
           <br />
           <TextFieldStyled
             id="category"
             label="Category"
             value={values.category}
-            onChange={handleChange('category')}
+            onChange={handleChange("category")}
           />
           <br />
           <TextFieldStyled
             id="quantity"
             label="Quantity"
             value={values.quantity}
-            onChange={handleChange('quantity')}
+            onChange={handleChange("quantity")}
             type="number"
           />
           <br />
@@ -152,7 +148,7 @@ const NewProduct = () => {
             id="price"
             label="Price"
             value={values.price}
-            onChange={handleChange('price')}
+            onChange={handleChange("price")}
             type="number"
           />
           <br />

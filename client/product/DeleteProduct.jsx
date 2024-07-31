@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import auth from '../lib/auth-helper';
-import styled from '@emotion/styled';
-import { read, remove } from './api-product.js';
-import { Redirect, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import auth from "../lib/auth-helper";
+import styled from "@emotion/styled";
+import { read, remove } from "./api-product.js";
+import { Redirect, useParams } from "react-router-dom";
 import {
   Card,
   CardActions,
   CardContent,
   Button,
   Typography,
-} from '@mui/material';
-import { Link } from 'react-router-dom';
+} from "@mui/material";
+import { Link } from "react-router-dom";
 
 const Root = styled.div`
   margin: 24px;
@@ -18,8 +18,8 @@ const Root = styled.div`
 
 const CardStyled = styled(Card)`
   max-width: 600px;
-  margin: 'auto';
-  text-align: 'center';
+  margin: "auto";
+  text-align: "center";
   margin-top: 24px;
   padding-bottom: 24px;
 `;
@@ -38,7 +38,7 @@ const DeleteProduct = () => {
   const [values, setValues] = useState({
     product: {},
     redirect: false,
-    error: '',
+    error: "",
   });
   const { productId } = useParams();
 
@@ -64,7 +64,7 @@ const DeleteProduct = () => {
       {
         productId: values.product._id,
       },
-      { t: jwt.token }
+      { t: jwt.token },
     ).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error });
@@ -83,16 +83,14 @@ const DeleteProduct = () => {
       <CardStyled>
         <CardContent>
           <Title>Delete Product</Title>
-          <Typography>
-            Are you sure you want to delete this product?
-          </Typography>
+          <Typography>Are you sure you want to delete this product?</Typography>
           {values.error && <Error>{values.error}</Error>}
         </CardContent>
         <CardActions>
           <Button color="primary" variant="contained" onClick={clickSubmit}>
             Confirm
           </Button>
-          <Link to={'/seller/shops'}>
+          <Link to={"/seller/shops"}>
             <Button variant="contained">Cancel</Button>
           </Link>
         </CardActions>

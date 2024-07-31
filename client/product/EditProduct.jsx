@@ -74,7 +74,7 @@ export default function EditProduct() {
       {
         productId: params.productId,
       },
-      signal
+      signal,
     ).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error });
@@ -111,7 +111,7 @@ export default function EditProduct() {
       {
         t: jwt.token,
       },
-      productData
+      productData,
     ).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error });
@@ -235,5 +235,3 @@ export default function EditProduct() {
     </div>
   );
 }
-
-

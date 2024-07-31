@@ -77,7 +77,7 @@ export default function EditShop() {
       {
         shopId: params.shopId,
       },
-      signal
+      signal,
     ).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error });
@@ -108,7 +108,7 @@ export default function EditShop() {
       {
         t: jwt.token,
       },
-      shopData
+      shopData,
     ).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error });
@@ -217,8 +217,3 @@ export default function EditShop() {
     </div>
   );
 }
-
-
-
-  
-  

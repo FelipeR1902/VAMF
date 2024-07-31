@@ -79,7 +79,7 @@ export default function NewProduct() {
       {
         t: jwt.token,
       },
-      productData
+      productData,
     ).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error });
@@ -195,5 +195,3 @@ export default function NewProduct() {
     </div>
   );
 }
-
-

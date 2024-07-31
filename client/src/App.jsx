@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
-import { ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider } from "@mui/material/styles";
 import MainRouter from "../MainRouter";
 import theme from "../theme";
 //import { hot } from 'react-hot-loader'

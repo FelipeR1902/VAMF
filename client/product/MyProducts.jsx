@@ -57,7 +57,7 @@ export default function MyProducts(props) {
       {
         shopId: props.shopId,
       },
-      signal
+      signal,
     ).then((data) => {
       if (data.error) {
         console.log(data.error);

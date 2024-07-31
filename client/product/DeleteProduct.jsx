@@ -24,7 +24,7 @@ export default function DeleteProduct(props) {
         shopId: props.shopId,
         productId: props.product._id,
       },
-      { t: jwt.token }
+      { t: jwt.token },
     ).then((data) => {
       if (data.error) {
         console.log(data.error);

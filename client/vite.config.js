@@ -22,9 +22,9 @@ export default defineConfig({
  rollupOptions: {
  input: "./src/main.jsx",
  alias: {
-    '@material-ui/core': 'node_modules/@material-ui/core',
-    '@material-ui/icons': 'node_modules/@material-ui/icons',
-    '@material-ui/styles': 'node_modules/@material-ui/styles',
+    '@mui/material': 'node_modules/@mui/material',
+    '@mui/icons-material': 'node_modules/@mui/icons-material',
+    '@mui/material/styles': 'node_modules/@mui/material/styles',
  }
  },
  },

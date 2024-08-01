@@ -1,113 +1,119 @@
-import React, { useEffect, useState } from "react";
-import auth from "../lib/auth-helper";
-import { listByOwner } from "./api-shop.js";
-import { Link, Navigate } from "react-router-dom";
-import styled from "@emotion/styled";
-import {
-  Card,
-  CardActions,
-  CardContent,
-  Button,
-  Typography,
-  Icon,
-  Avatar,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemSecondaryAction,
-  ListItemText,
-  IconButton,
-  Divider,
-} from "@mui/material";
-import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import React, { useState, useEffect } from 'react';
+import styled from '@emotion/styled';
+import Paper from '@mui/material/Paper';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import ListItemText from '@mui/material/ListItemText';
+import Avatar from '@mui/material/Avatar';
+import IconButton from '@mui/material/IconButton';
+import Icon from '@mui/material/Icon';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Edit from '@mui/icons-material/Edit';
+import Divider from '@mui/material/Divider';
+import auth from '../lib/auth-helper';
+import { listByOwner } from './api-shop';
+import { Navigate, Link } from 'react-router-dom';
+import DeleteShop from './DeleteShop';
 
-const Root = styled.div`
+const Root = styled(Paper)`
+  max-width: 600px;
+  margin: auto;
   padding: 16px;
+  margin-top: 40px;
 `;
 
 const Title = styled(Typography)`
-  margin-top: 16px;
-  color: #2e7d32;
+  margin: 24px 0 24px 8px;
+  color: ${props => props.theme.palette.protectedTitle};
   font-size: 1.2em;
 `;
 
-const Error = styled(Typography)`
-  color: red;
+const AddButton = styled(Button)`
+  float: right;
 `;
 
-const ButtonStyled = styled(Button)`
-  margin: 16px;
+const LeftIcon = styled(Icon)`
+  margin-right: 8px;
 `;
 
-const AvatarStyled = styled(Avatar)`
-  width: 60px;
-  height: 60px;
-  margin: auto;
-`;
-
-const MyShops = () => {
+export default function MyShops() {
   const [shops, setShops] = useState([]);
-  const [redirect, setRedirect] = useState(false);
+  const [redirectToSignin, setRedirectToSignin] = useState(false);
+  const jwt = auth.isAuthenticated();
 
   useEffect(() => {
     const abortController = new AbortController();
     const signal = abortController.signal;
 
-    listByOwner({ userId: auth.isAuthenticated().user._id }, signal).then(
-      (data) => {
-        if (data && data.error) {
-          setRedirect(true);
-        } else {
-          setShops(data);
-        }
-      },
-    );
+    listByOwner(
+      { userId: jwt.user._id },
+      { t: jwt.token },
+      signal
+    ).then((data) => {
+      if (data.error) {
+        setRedirectToSignin(true);
+      } else {
+        setShops(data);
+      }
+    });
+
     return function cleanup() {
       abortController.abort();
     };
-  }, []);
+  }, [jwt.user._id, jwt.token]);
 
-  if (redirect) {
-    return <Navigate to={"/"} />;
+  const removeShop = (shop) => {
+    const updatedShops = [...shops];
+    const index = updatedShops.indexOf(shop);
+    updatedShops.splice(index, 1);
+    setShops(updatedShops);
+  };
+
+  if (redirectToSignin) {
+    return <Navigate to="/signin" />;
   }
 
   return (
-    <Root>
-      <Title>My Shops</Title>
-      <Card>
-        <CardContent>
-          <List dense>
-            {shops.map((shop, i) => (
-              <span key={i}>
-                <ListItem>
-                  <ListItemAvatar>
-                    <AvatarStyled src={`/api/shops/logo/${shop._id}`} />
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={shop.name}
-                    secondary={shop.description}
-                  />
+    <div>
+      <Root elevation={4}>
+        <Title variant="h6">
+          Your Shops
+          <span>
+            <Link to="/seller/shop/new">
+              <AddButton color="primary" variant="contained">
+                <LeftIcon>add_box</LeftIcon>
+                New Shop
+              </AddButton>
+            </Link>
+          </span>
+        </Title>
+        <List dense>
+          {shops.map((shop, i) => (
+            <span key={i}>
+              <ListItem button>
+                <ListItemAvatar>
+                  <Avatar src={'/api/shops/logo/' + shop._id + '?' + new Date().getTime()} />
+                </ListItemAvatar>
+                <ListItemText primary={shop.name} secondary={shop.description} />
+                {auth.isAuthenticated().user && auth.isAuthenticated().user._id === shop.owner._id && (
                   <ListItemSecondaryAction>
-                    <Link to={`/seller/shop/edit/${shop._id}`}>
+                    <Link to={"/seller/shop/edit/" + shop._id}>
                       <IconButton aria-label="Edit" color="primary">
-                        <EditIcon />
+                        <Edit />
                       </IconButton>
                     </Link>
-                    <Link to={`/seller/shop/delete/${shop._id}`}>
-                      <IconButton aria-label="Delete" color="secondary">
-                        <DeleteIcon />
-                      </IconButton>
-                    </Link>
+                    <DeleteShop shop={shop} onRemove={removeShop} />
                   </ListItemSecondaryAction>
-                </ListItem>
-                <Divider />
-              </span>
-            ))}
-          </List>
-        </CardContent>
-      </Card>
-    </Root>
+                )}
+              </ListItem>
+              <Divider />
+            </span>
+          ))}
+        </List>
+      </Root>
+    </div>
   );
-};
-
-export default MyShops;
+}

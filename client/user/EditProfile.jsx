@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 import auth from '../lib/auth-helper';
 import { read, update, remove } from './api-user.js';
 import styled from '@emotion/styled';
@@ -7,26 +7,21 @@ import {
   Card,
   CardActions,
   CardContent,
+  FormControlLabel,
+  Switch,
   Button,
   TextField,
   Typography,
-  Avatar,
   Icon,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle
+  DialogTitle,
 } from '@mui/material';
 
 const Root = styled.div`
   padding: 16px;
-`;
-
-const AvatarStyled = styled(Avatar)`
-  width: 100px;
-  height: 100px;
-  margin: auto;
 `;
 
 const CardStyled = styled(Card)`
@@ -57,65 +52,60 @@ const ButtonStyled = styled(Button)`
   margin: auto;
 `;
 
-const EditProfile = () => {
+export default function EditProfile() {
   const [values, setValues] = useState({
     name: '',
-    email: '',
     password: '',
-    redirectToProfile: false,
+    email: '',
+    seller: false,
     error: '',
+    NavigateToProfile: false,
     redirectToHome: false,
   });
   const [open, setOpen] = useState(false); // State for dialog
-  const { userId } = useParams();
+  const jwt = auth.isAuthenticated();
 
   useEffect(() => {
     const abortController = new AbortController();
     const signal = abortController.signal;
 
-    const jwt = auth.isAuthenticated();
-    if (!jwt) {
-      setValues({ ...values, redirectToProfile: true });
-      return;
-    }
-
-    read({ userId }, { t: jwt.token }, signal).then((data) => {
+    read({ userId: jwt.user._id }, { t: jwt.token }, signal).then((data) => {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
       } else {
-        setValues({ ...values, name: data.name, email: data.email });
+        setValues({ ...values, name: data.name, email: data.email, seller: data.seller });
       }
     });
     return function cleanup() {
       abortController.abort();
     };
-  }, [userId]);
+  }, [jwt.user._id]);
 
   const clickSubmit = () => {
-    const jwt = auth.isAuthenticated();
     const user = {
       name: values.name || undefined,
       email: values.email || undefined,
       password: values.password || undefined,
+      seller: values.seller || false,
     };
-
-    update({ userId }, { t: jwt.token }, user).then((data) => {
+    update({ userId: jwt.user._id }, { t: jwt.token }, user).then((data) => {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
       } else {
-        setValues({ ...values, redirectToProfile: true });
+        auth.updateUser(data, () => {
+          setValues({ ...values, userId: data._id, NavigateToProfile: true });
+        });
       }
     });
   };
 
   const handleDelete = () => {
-    const jwt = auth.isAuthenticated();
     setOpen(false); // Close the dialog immediately
-    remove({ userId }, { t: jwt.token }).then((data) => {
+    remove({ userId: jwt.user._id }, { t: jwt.token }).then((data) => {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
       } else {
-        auth.clearJWT(() => console.log('User Deleted'));
+        auth.signout(() => console.log('deleted'));
         setValues({ ...values, redirectToHome: true });
       }
     });
@@ -123,6 +113,10 @@ const EditProfile = () => {
 
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
+  };
+
+  const handleCheck = (event, checked) => {
+    setValues({ ...values, seller: checked });
   };
 
   const handleClickOpen = () => {
@@ -133,8 +127,8 @@ const EditProfile = () => {
     setOpen(false);
   };
 
-  if (values.redirectToProfile) {
-    return <Navigate to={`/user/${userId}`} />;
+  if (values.NavigateToProfile) {
+    return <Navigate to={'/user/' + values.userId} />;
   }
 
   if (values.redirectToHome) {
@@ -146,7 +140,6 @@ const EditProfile = () => {
       <CardStyled>
         <CardContent>
           <Title>Edit Profile</Title>
-          <AvatarStyled src={`/api/users/photo/${userId}`} />
           <TextFieldStyled
             id="name"
             label="Name"
@@ -172,6 +165,20 @@ const EditProfile = () => {
             onChange={handleChange('password')}
             margin="normal"
           />
+          <Typography variant="subtitle1" style={{ marginTop: 16, color: '#2e7d32' }}>
+            Seller Account
+          </Typography>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={values.seller}
+                onChange={handleCheck}
+                name="seller"
+                color="primary"
+              />
+            }
+            label={values.seller ? 'Active' : 'Inactive'}
+          />
           <br />
           {values.error && (
             <Error component="p">
@@ -181,10 +188,18 @@ const EditProfile = () => {
           )}
         </CardContent>
         <CardActions>
-          <ButtonStyled color="primary" variant="contained" onClick={clickSubmit}>
+          <ButtonStyled
+            color="primary"
+            variant="contained"
+            onClick={clickSubmit}
+          >
             Submit
           </ButtonStyled>
-          <ButtonStyled color="secondary" variant="contained" onClick={handleClickOpen}>
+          <ButtonStyled
+            color="secondary"
+            variant="contained"
+            onClick={handleClickOpen}
+          >
             Delete
           </ButtonStyled>
         </CardActions>
@@ -207,6 +222,4 @@ const EditProfile = () => {
       </Dialog>
     </Root>
   );
-};
-
-export default EditProfile;
+}

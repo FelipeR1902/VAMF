@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import auth from '../lib/auth-helper';
-import { read, update } from './api-user.js';
+import { read, update, remove } from './api-user.js';
 import styled from '@emotion/styled';
 import {
   Card,
@@ -11,6 +11,12 @@ import {
   TextField,
   Typography,
   Avatar,
+  Icon,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
 } from '@mui/material';
 
 const Root = styled.div`
@@ -58,7 +64,9 @@ const EditProfile = () => {
     password: '',
     redirectToProfile: false,
     error: '',
+    redirectToHome: false,
   });
+  const [open, setOpen] = useState(false); // State for dialog
   const { userId } = useParams();
 
   useEffect(() => {
@@ -100,12 +108,37 @@ const EditProfile = () => {
     });
   };
 
+  const handleDelete = () => {
+    const jwt = auth.isAuthenticated();
+    setOpen(false); // Close the dialog immediately
+    remove({ userId }, { t: jwt.token }).then((data) => {
+      if (data && data.error) {
+        setValues({ ...values, error: data.error });
+      } else {
+        auth.clearJWT(() => console.log('User Deleted'));
+        setValues({ ...values, redirectToHome: true });
+      }
+    });
+  };
+
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
   };
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   if (values.redirectToProfile) {
     return <Navigate to={`/user/${userId}`} />;
+  }
+
+  if (values.redirectToHome) {
+    return <Navigate to="/" />;
   }
 
   return (
@@ -151,8 +184,27 @@ const EditProfile = () => {
           <ButtonStyled color="primary" variant="contained" onClick={clickSubmit}>
             Submit
           </ButtonStyled>
+          <ButtonStyled color="secondary" variant="contained" onClick={handleClickOpen}>
+            Delete
+          </ButtonStyled>
         </CardActions>
       </CardStyled>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this account? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="secondary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Root>
   );
 };

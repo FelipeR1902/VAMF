@@ -1,5 +1,6 @@
 import { createTheme } from "@mui/material/styles";
-import { pink } from "@mui/material/colors";
+import { pink, green } from "@mui/material/colors";
+
 const theme = createTheme({
   typography: {
     useNextVariants: true,
@@ -7,13 +8,13 @@ const theme = createTheme({
   palette: {
     primary: {
       light: "#5c67a3",
-      main: "#3f4771",
+      main: green["700"],
       dark: "#2e355b",
       contrastText: "#fff",
     },
     secondary: {
       light: "#ff79b0",
-      main: "#ff4081",
+      main: "#ED9390",
       dark: "#c60055",
       contrastText: "#000",
     },

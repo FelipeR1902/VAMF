@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import auth from "../lib/auth-helper";
-import styled from "@emotion/styled";
-import { read, update } from "./api-user.js";
-import { Link, Navigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { Navigate, useParams } from 'react-router-dom';
+import auth from '../lib/auth-helper';
+import { read, update } from './api-user.js';
+import styled from '@emotion/styled';
 import {
   Card,
   CardActions,
@@ -10,12 +10,17 @@ import {
   Button,
   TextField,
   Typography,
-  Icon,
   Avatar,
-} from "@mui/material";
+} from '@mui/material';
 
 const Root = styled.div`
   padding: 16px;
+`;
+
+const AvatarStyled = styled(Avatar)`
+  width: 100px;
+  height: 100px;
+  margin: auto;
 `;
 
 const CardStyled = styled(Card)`
@@ -43,22 +48,16 @@ const TextFieldStyled = styled(TextField)`
 `;
 
 const ButtonStyled = styled(Button)`
-  margin: 16px;
-`;
-
-const AvatarStyled = styled(Avatar)`
-  width: 60px;
-  height: 60px;
   margin: auto;
 `;
 
 const EditProfile = () => {
   const [values, setValues] = useState({
-    name: "",
-    email: "",
-    password: "",
+    name: '',
+    email: '',
+    password: '',
     redirectToProfile: false,
-    error: "",
+    error: '',
   });
   const { userId } = useParams();
 
@@ -66,25 +65,23 @@ const EditProfile = () => {
     const abortController = new AbortController();
     const signal = abortController.signal;
 
-    read({ userId }, signal).then((data) => {
+    const jwt = auth.isAuthenticated();
+    if (!jwt) {
+      setValues({ ...values, redirectToProfile: true });
+      return;
+    }
+
+    read({ userId }, { t: jwt.token }, signal).then((data) => {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
       } else {
-        setValues({
-          ...values,
-          name: data.name,
-          email: data.email,
-        });
+        setValues({ ...values, name: data.name, email: data.email });
       }
     });
     return function cleanup() {
       abortController.abort();
     };
   }, [userId]);
-
-  const handleChange = (name) => (event) => {
-    setValues({ ...values, [name]: event.target.value });
-  };
 
   const clickSubmit = () => {
     const jwt = auth.isAuthenticated();
@@ -94,21 +91,17 @@ const EditProfile = () => {
       password: values.password || undefined,
     };
 
-    update(
-      {
-        userId: userId,
-      },
-      {
-        t: jwt.token,
-      },
-      user,
-    ).then((data) => {
+    update({ userId }, { t: jwt.token }, user).then((data) => {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
       } else {
         setValues({ ...values, redirectToProfile: true });
       }
     });
+  };
+
+  const handleChange = (name) => (event) => {
+    setValues({ ...values, [name]: event.target.value });
   };
 
   if (values.redirectToProfile) {
@@ -120,11 +113,13 @@ const EditProfile = () => {
       <CardStyled>
         <CardContent>
           <Title>Edit Profile</Title>
+          <AvatarStyled src={`/api/users/photo/${userId}`} />
           <TextFieldStyled
             id="name"
             label="Name"
             value={values.name}
-            onChange={handleChange("name")}
+            onChange={handleChange('name')}
+            margin="normal"
           />
           <br />
           <TextFieldStyled
@@ -132,7 +127,8 @@ const EditProfile = () => {
             type="email"
             label="Email"
             value={values.email}
-            onChange={handleChange("email")}
+            onChange={handleChange('email')}
+            margin="normal"
           />
           <br />
           <TextFieldStyled
@@ -140,7 +136,8 @@ const EditProfile = () => {
             type="password"
             label="Password"
             value={values.password}
-            onChange={handleChange("password")}
+            onChange={handleChange('password')}
+            margin="normal"
           />
           <br />
           {values.error && (
@@ -151,16 +148,9 @@ const EditProfile = () => {
           )}
         </CardContent>
         <CardActions>
-          <ButtonStyled
-            color="primary"
-            variant="contained"
-            onClick={clickSubmit}
-          >
-            Update
+          <ButtonStyled color="primary" variant="contained" onClick={clickSubmit}>
+            Submit
           </ButtonStyled>
-          <Link to={`/user/${userId}`}>
-            <ButtonStyled variant="contained">Cancel</ButtonStyled>
-          </Link>
         </CardActions>
       </CardStyled>
     </Root>

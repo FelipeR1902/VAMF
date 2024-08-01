@@ -6,13 +6,20 @@ import IconButton from "@mui/material/IconButton";
 import HomeIcon from "@mui/icons-material/Home";
 import Button from "@mui/material/Button";
 import auth from "../lib/auth-helper";
+import styled from "@emotion/styled";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import logo from "../src/assets/vamf.svg";
 
-const isActive = (location, path) => {
+const isActive = (location, path) => {  
   return location.pathname === path
-    ? { color: "#ff4081" }
+    ? { color: "#FFBF46" }
     : { color: "#ffffff" };
 };
+
+const Logo = styled.img`
+  width: 50px;
+  height: 50px;
+`;
 
 const isPartActive = (location, path) => {
   if (location.pathname.includes(path)) return { color: "#bef67a" };
@@ -26,13 +33,9 @@ export default function Menu() {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6" color="inherit">
-          GAME OVER
-        </Typography>
+        <Logo src={logo}/>
         <Link to="/">
-          <IconButton aria-label="Home" style={isActive(location, "/")}>
-            <HomeIcon />
-          </IconButton>
+          <Button style={isActive(location, "/")}>Home</Button>
         </Link>
         <Link to="/users">
           <Button style={isActive(location, "/users")}>Users</Button>

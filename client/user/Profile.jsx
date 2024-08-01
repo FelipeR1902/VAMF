@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
-import auth from "../lib/auth-helper";
-import styled from "@emotion/styled";
-import { read } from "./api-user.js";
-import { Navigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import auth from '../lib/auth-helper';
+import styled from '@emotion/styled';
+import { read } from './api-user.js';
+import { Navigate, useParams, Link } from 'react-router-dom';
 import {
   Card,
   CardActions,
   CardContent,
   Button,
   Typography,
-  Icon,
   Avatar,
-} from "@mui/material";
+} from '@mui/material';
 
 const Root = styled.div`
   padding: 16px;
@@ -23,6 +22,11 @@ const CardStyled = styled(Card)`
   text-align: center;
   margin-top: 24px;
   padding-bottom: 24px;
+`;
+
+
+const EditLink = styled(Link)`
+  margin: 0 auto;
 `;
 
 const Title = styled(Typography)`
@@ -45,7 +49,7 @@ const Profile = () => {
   const [values, setValues] = useState({
     user: {},
     redirectToSignin: false,
-    error: "",
+    error: '',
   });
   const { userId } = useParams();
 
@@ -53,7 +57,13 @@ const Profile = () => {
     const abortController = new AbortController();
     const signal = abortController.signal;
 
-    read({ userId }, signal).then((data) => {
+    const jwt = auth.isAuthenticated();
+    if (!jwt) {
+      setValues({ ...values, redirectToSignin: true });
+      return;
+    }
+
+    read({ userId }, { t: jwt.token }, signal).then((data) => {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
       } else {
@@ -74,7 +84,16 @@ const Profile = () => {
       <CardStyled>
         <CardContent>
           <Title>Profile</Title>
-          <AvatarStyled src={`/api/users/photo/${values.user._id}`} />
+          {values.user._id ? (
+            <AvatarStyled 
+              src={`/api/users/photo/${values.user._id}`}
+              onError={(e) => { e.target.onerror = null; e.target.src="/path/to/default-avatar.png"; }}
+            />
+          ) : (
+            <Typography variant="body2" component="p">
+              No Photo
+            </Typography>
+          )}
           <Typography variant="h6">{values.user.name}</Typography>
           <Typography variant="body1">{values.user.email}</Typography>
           <Typography variant="body1">
@@ -83,11 +102,11 @@ const Profile = () => {
           {values.error && <Error>{values.error}</Error>}
         </CardContent>
         <CardActions>
-          <Link to={`/user/edit/${values.user._id}`}>
+          <EditLink to={`/user/edit/${values.user._id}`}>
             <Button color="primary" variant="contained">
               Edit Profile
             </Button>
-          </Link>
+          </EditLink>
         </CardActions>
       </CardStyled>
     </Root>

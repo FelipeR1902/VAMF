@@ -13,6 +13,9 @@ import {
 
 const Root = styled.div`
   padding: 16px;
+  margin: 10px;
+  
+
 `;
 
 const CardStyled = styled(Card)`
@@ -33,7 +36,14 @@ const Error = styled(Typography)`
   color: red;
 `;
 
+
+const buttons = styled.div`
+  text-align: center;
+
+`;
+
 const TextFieldStyled = styled(TextField)`
+  margin-top: 10px;
   margin-left: 8px;
   margin-right: 8px;
   width: 300px;
@@ -41,6 +51,7 @@ const TextFieldStyled = styled(TextField)`
 
 const ButtonStyled = styled(Button)`
   margin: 16px;
+  
 `;
 
 const Signup = () => {
@@ -107,7 +118,7 @@ const Signup = () => {
             </Error>
           )}
         </CardContent>
-        <CardActions>
+        <buttons >
           <ButtonStyled
             color="primary"
             variant="contained"
@@ -115,7 +126,7 @@ const Signup = () => {
           >
             Sign Up
           </ButtonStyled>
-        </CardActions>
+        </buttons>
       </CardStyled>
       {values.open && (
         <Typography variant="h6" color="primary">

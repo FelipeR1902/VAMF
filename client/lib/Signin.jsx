@@ -35,9 +35,15 @@ const Error = styled(Typography)`
 `;
 
 const TextFieldStyled = styled(TextField)`
+  margin-top: 10px;
   margin-left: 8px;
   margin-right: 8px;
   width: 300px;
+`;
+
+const buttons = styled.div`
+  text-align: center;
+
 `;
 
 const ButtonStyled = styled(Button)`
@@ -113,7 +119,7 @@ export default function Signin(props) {
             </Error>
           )}
         </CardContent>
-        <CardActions>
+        <buttons>
           <ButtonStyled
             color="primary"
             variant="contained"
@@ -121,7 +127,7 @@ export default function Signin(props) {
           >
             Submit
           </ButtonStyled>
-        </CardActions>
+        </buttons>
       </CardStyled>
     </Root>
   );

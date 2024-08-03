@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { list } from "./api-user.js";
 import { Link } from "react-router-dom";
+
 import {
   Card,
   CardActions,
@@ -21,13 +22,17 @@ import {
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 
 const Root = styled.div`
-  padding: 16px;
+  padding: 16px 10px;
+  margin: 10px 10px;
 `;
 
 const Title = styled(Typography)`
   margin-top: 16px;
+  margin-bottom: 10px;
   color: #2e7d32;
-  font-size: 1.2em;
+  font-size: 1.3em;
+  font-weight: bold;
+  text-align: center;
 `;
 
 const Error = styled(Typography)`
@@ -38,11 +43,14 @@ const ButtonStyled = styled(Button)`
   margin: 16px;
 `;
 
-const AvatarStyled = styled(Avatar)`
-  width: 60px;
-  height: 60px;
+
+
+const ListItemStyled = styled(ListItem)`
   margin: auto;
+  padding: 10px;
 `;
+
+
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -71,12 +79,12 @@ const Users = () => {
           <List dense>
             {users.map((user, i) => (
               <span key={i}>
-                <ListItem>
+                <ListItemStyled >
                   <ListItemAvatar>
-                    <AvatarStyled src={`/api/users/photo/${user._id}`} />
+                    <Avatar src={`/api/users/photo/${user._id}`} />
                   </ListItemAvatar>
                   <ListItemText primary={user.name} secondary={user.email} />
-                  <ListItemSecondaryAction>
+                  <ListItemSecondaryAction className="ItemText" >
                     <Link to={`/user/edit/${user._id}`}>
                       <IconButton aria-label="Edit" color="primary">
                         <EditIcon />
@@ -88,7 +96,7 @@ const Users = () => {
                       </IconButton>
                     </Link>
                   </ListItemSecondaryAction>
-                </ListItem>
+                </ListItemStyled>
                 <Divider />
               </span>
             ))}

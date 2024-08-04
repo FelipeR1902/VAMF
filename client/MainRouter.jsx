@@ -67,7 +67,7 @@ function MainRouter() {
           component={NewProduct}
         />
         <Route
-          path="/seller/:shopId/:productId/edit"
+          path="/seller/:shopId/edit/:productId"
           element={
             <PrivateRoute>
               <EditProduct />

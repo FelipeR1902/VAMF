@@ -11,6 +11,7 @@ import MyShops from "./shop/MyShops";
 import NewShop from "./shop/NewShop";
 import EditShop from "./shop/EditShop";
 import NewProduct from "./product/NewProduct";
+import MyProducts from "./product/MyProducts";
 import EditProduct from "./product/EditProduct";
 import Menu from "./core/Menu";
 function MainRouter() {
@@ -73,6 +74,16 @@ function MainRouter() {
             </PrivateRoute>
           }
         />
+
+        <Route
+          path="/seller/:shopId"
+          element={
+            <PrivateRoute>
+              <MyProducts />
+            </PrivateRoute>
+          }
+        />
+
       </Routes>
     </div>
   );

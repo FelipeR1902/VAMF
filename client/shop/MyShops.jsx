@@ -15,7 +15,7 @@ import Edit from '@mui/icons-material/Edit';
 import Divider from '@mui/material/Divider';
 import auth from '../lib/auth-helper';
 import { listByOwner } from './api-shop';
-import { Navigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import DeleteShop from './DeleteShop';
 
 const Root = styled(Paper)`
@@ -39,7 +39,13 @@ const LeftIcon = styled(Icon)`
   margin-right: 8px;
 `;
 
+const StyleLink = styled(Link)`
+  font-size: '1.2em';
+  text-decoration: none;
+`;
+
 export default function MyShops() {
+  const navigate=useNavigate();
   const [shops, setShops] = useState([]);
   const [redirectToSignin, setRedirectToSignin] = useState(false);
   const jwt = auth.isAuthenticated();
@@ -76,6 +82,8 @@ export default function MyShops() {
     return <Navigate to="/signin" />;
   }
 
+  
+
   return (
     <div>
       <Root elevation={4}>
@@ -93,7 +101,7 @@ export default function MyShops() {
         <List dense>
           {shops.map((shop, i) => (
             <span key={i}>
-              <ListItem button>
+              <StyleLink to={"/seller/"+shop._id}>
                 <ListItemAvatar>
                   <Avatar src={'/api/shops/logo/' + shop._id + '?' + new Date().getTime()} />
                 </ListItemAvatar>
@@ -108,7 +116,7 @@ export default function MyShops() {
                     <DeleteShop shop={shop} onRemove={removeShop} />
                   </ListItemSecondaryAction>
                 )}
-              </ListItem>
+              </StyleLink>
               <Divider />
             </span>
           ))}

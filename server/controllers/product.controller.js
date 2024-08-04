@@ -107,6 +107,7 @@ const remove = async (req, res) => {
 
 const listByShop = async (req, res) => {
   try {
+
     let products = await Product.find({ shop: req.shop._id })
       .populate("shop", "_id name")
       .select("-image");

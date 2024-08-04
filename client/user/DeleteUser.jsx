@@ -69,8 +69,9 @@ const DeleteUser = () => {
       if (data.error) {
         setValues({ ...values, error: data.error });
       } else {
-        auth.signout(() => console.log("deleted"));
+        // auth.signout(() => console.log("deleted"));
         setValues({ ...values, redirect: true });
+        auth.clearJWT(() => navigate("/"));
       }
     });
   };

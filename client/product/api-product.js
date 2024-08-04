@@ -64,9 +64,10 @@ const create = async (params, credentials, product) => {
     }
   };
   
-  const listByShop = async (params, signal) => {
+  // const listByShop = async (params, signal) => {
+  const listByShop = async (ShopID, signal) => {
     try {
-      let response = await fetch("/api/products/by/" + params.shopId, {
+      let response = await fetch("/api/products/by/" + ShopID, {
         method: "GET",
         signal: signal,
       });

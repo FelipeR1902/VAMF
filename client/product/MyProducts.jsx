@@ -23,6 +23,12 @@ import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 
 const Root = styled.div`
   padding: 16px;
+
+
+`;
+
+const AddButton = styled(Button)`
+  margin: 10px
 `;
 
 const Title = styled(Typography)`
@@ -49,12 +55,12 @@ const MyProducts = () => {
   const [products, setProducts] = useState([]);
   const [redirect, setRedirect] = useState(false);
   const { shopId } = useParams();
-
+  
   useEffect(() => {
     const abortController = new AbortController();
     const signal = abortController.signal;
 
-    listByShop({ shopId }, signal).then((data) => {
+    listByShop(shopId , signal).then((data) => {
       if (data && data.error) {
         setRedirect(true);
       } else {
@@ -72,7 +78,11 @@ const MyProducts = () => {
 
   return (
     <Root>
-      <Title>My Products</Title>
+      <Link to={`/seller/${shopId}/products/new`}>
+      <AddButton color="primary" variant="contained">
+                New Product
+      </AddButton>
+      </Link>
       <Card>
         <CardContent>
           <List dense>

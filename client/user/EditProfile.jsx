@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom'
 import auth from '../lib/auth-helper';
 import { read, update, remove } from './api-user.js';
 import styled from '@emotion/styled';
@@ -63,6 +63,7 @@ export default function EditProfile() {
     redirectToHome: false,
   });
   const [open, setOpen] = useState(false); // State for dialog
+  const navigate=useNavigate();
   const jwt = auth.isAuthenticated();
 
   useEffect(() => {
@@ -105,8 +106,9 @@ export default function EditProfile() {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
       } else {
-        auth.signout(() => console.log('deleted'));
+        // auth.signout(() => console.log('deleted'));
         setValues({ ...values, redirectToHome: true });
+        auth.clearJWT(() => navigate("/"));
       }
     });
   };

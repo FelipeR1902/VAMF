@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
+import {useNavigate} from 'react-router-dom'
 import { create } from "./api-user.js";
 import {
   Card,
@@ -10,6 +11,14 @@ import {
   Typography,
   Icon,
 } from "@mui/material";
+
+import {Link} from "@mui/material";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
 
 const Root = styled.div`
   padding: 16px;
@@ -37,7 +46,7 @@ const Error = styled(Typography)`
 `;
 
 
-const buttons = styled.div`
+const ButtonS = styled.div`
   text-align: center;
 
 `;
@@ -54,6 +63,15 @@ const ButtonStyled = styled(Button)`
   
 `;
 
+
+const StyledDialog = styled(Dialog)`
+  & .MuiPaper-root {
+    background-color: white;
+    padding: 30px;
+  }
+`;
+
+
 const Signup = () => {
   const [values, setValues] = useState({
     name: "",
@@ -62,9 +80,16 @@ const Signup = () => {
     error: "",
     open: false,
   });
+ 
+  const navigate=useNavigate();
 
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
+  };
+
+  const handleClose = () => {
+    navigate("/signin")
+
   };
 
   const clickSubmit = () => {
@@ -118,7 +143,7 @@ const Signup = () => {
             </Error>
           )}
         </CardContent>
-        <buttons >
+        <ButtonS >
           <ButtonStyled
             color="primary"
             variant="contained"
@@ -126,13 +151,23 @@ const Signup = () => {
           >
             Sign Up
           </ButtonStyled>
-        </buttons>
+        </ButtonS>
       </CardStyled>
-      {values.open && (
-        <Typography variant="h6" color="primary">
-          New account successfully created.
-        </Typography>
-      )}
+
+        <StyledDialog  open={values.open}>
+                <DialogTitle>New Account</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>New account successfully created.</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                        <Button onClick={handleClose}>
+                        Sign In
+                        </Button>
+                    
+                </DialogActions>
+             </StyledDialog>
+             
+
     </Root>
   );
 };

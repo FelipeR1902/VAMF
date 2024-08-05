@@ -1,4 +1,3 @@
-@@ -1,65 +1,8 @@
 # VAMF Project
 
 This project is a Vite-based web application. Follow the instructions below to get started.

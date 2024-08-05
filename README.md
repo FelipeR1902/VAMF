@@ -1,8 +1,11 @@
+@@ -1,65 +1,8 @@
 # VAMF Project
 
 This project is a Vite-based web application. Follow the instructions below to get started.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 ## Prerequisites
+Currently, two official plugins are available:
 
 Make sure you have the following installed on your machine:
 
@@ -18,25 +21,19 @@ Make sure you have the following installed on your machine:
    cd VAMF
    ```
 
-2. **Navigate to the client folder:**
-
-   ```sh
-   cd client
-   ```
-
-3. **Install dependencies:**
+2. **Install dependencies:**
 
    ```sh
    npm install
    ```
 
-4. **Start the development server:**
+3. **Start the development server:**
 
    ```sh
    npm run dev
    ```
 
-5. **Open the application in your browser:**
+4. **Open the application in your browser:**
 
    The development server will start and you can open your browser and navigate to `http://localhost:5173` to see the application running.
 
@@ -63,3 +60,5 @@ VAMF/
 │   └── vite.config.js
 └── server/         # Backend application
 ```
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh

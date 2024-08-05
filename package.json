@@ -1,38 +1,36 @@
 {
-  "name": "vamf-webb-app",
-  "version": "1.0.0",
+  "name": "vamf",
+  "private": true,
+  "version": "0.0.0",
   "type": "module",
-  "main": "index.js",
-  "author": "VAMF",
-  "license": "MIT",
-  "devDependencies": {
-    "@babel/core": "latest",
-    "@babel/preset-env": "latest",
-    "@babel/preset-react": "latest",
-    "babel-loader": "latest",
-    "concurrently": "latest",
-    "nodemon": "latest",
-    "vite": "latest"
-  },
   "scripts": {
-    "dev": "concurrently 'vite' \"nodemon server.js\"",
+    "dev": "vite",
     "build": "vite build",
-    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
-    "body-parser": "latest",
-    "compression": "latest",
-    "cookie-parser": "latest",
-    "cors": "latest",
-    "express": "latest",
-    "express-jwt": "latest",
-    "formidable": "latest",
-    "global": "latest",
-    "helmet": "latest",
-    "jsonwebtoken": "latest",
-    "lodash": "latest",
-    "method-override": "latest",
-    "mongoose": "latest"
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^5.16.6",
+    "@mui/lab": "^5.0.0-alpha.173",
+    "@mui/material": "^5.16.6",
+    "@vitejs/plugin-react": "^4.3.1",
+    "firebase": "^10.12.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3",
+    "react-firebase-hooks": "^5.1.1",
+    "react-router-dom": "^6.26.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "vite": "^5.2.0"
   }
 }
